@@ -5,6 +5,7 @@ import stockApi from '../Utils/apis/stock_api';
 import News from './News';
 import Stocks from './Stocks';
 import marketHolidayApi from '../Utils/apis/market_holiday';
+import StockChart from './Stock_Chart';
 
 export default function Home() {
     const [responseData, setResponseData] = useState(null);
@@ -12,10 +13,7 @@ export default function Home() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // const data = await intradayStockApi('NSE_EQ', 'INE002A01018');
-                const data = await marketHolidayApi('2024-03-25');
-                // const data = await stockApi('NSE_EQ', 'INE002A01018', '30minute', '2024-03-27', '2024-03-27');
-                // const data = await newsApi();
+                const data = await stockApi('NSE_EQ', 'INE002A01018', 'day', '2024-03-26', '2000-03-25');
                 setResponseData(data);
             } catch (error) {
                 console.error(error.message);
@@ -26,15 +24,22 @@ export default function Home() {
     }, []);
     return (
         <>
-            {/* <div>
-                {responseData ? (
-                    <pre>{JSON.stringify(responseData, null, 2)}</pre>
-                ) : (
-                    <p>Loading...</p>
-                )}
-            </div> */}
-            <Stocks />
-            <News />
+            <div className="row">
+                <div className="col-md-9">
+                    <StockChart stockName='Hero Motocorp Ltd' stockCode='NSE_EQ' companyIsin='INE158A01026' timeInterval='day' startDate='2024-03-26' endDate='2000-01-01' />
+                </div>
+                <div className="col-md-3">
+                    <Stocks />
+                </div>
+            </div>
+            <div className="row">
+                <div className="col-md-9">
+                    <News />
+                </div>
+                {/* <div className="col-md-3">
+                    <Stocks />
+                </div> */}
+            </div>
         </>
-    )
+    );
 }

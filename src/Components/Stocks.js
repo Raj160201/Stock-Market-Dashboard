@@ -60,14 +60,14 @@ export default function Stocks() {
 
                         if (currentTime < marketOpeningTime.getTime()) {
                             const lastSecondTradingDay = findLastTradingDay(new Date(lastTradingDay));
-                            stockInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);
+                            stockInfo = await intradayStockApi('NSE_EQ', ISIN_Code);
                             lastDayInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastSecondTradingDay, lastSecondTradingDay);
                         } else if (currentTime >= marketOpeningTime.getTime() && currentTime <= marketClosingTime.getTime()) {
                             stockInfo = await intradayStockApi('NSE_EQ', ISIN_Code);
                             lastDayInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);
                         } else if (currentTime >= marketClosingTime.getTime()) {
                             const todayDate = today.toISOString().split('T')[0];
-                            stockInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', todayDate, todayDate);
+                            stockInfo = await intradayStockApi('NSE_EQ', ISIN_Code);
                             lastDayInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);
                         }
 

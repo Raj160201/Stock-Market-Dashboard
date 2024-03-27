@@ -6,7 +6,7 @@
 }
 
 .card-group.card-group-scroll>.card {
-    flex-basis: 40%;
+    flex-basis: 35%;
 }
 
 .smaller-card-group {
@@ -17,4 +17,27 @@
 
 .card-body {
     padding-bottom: 0;
+}
+
+rect {
+    pointer-events: all;
+    fill-opacity: 0;
+    stroke-opacity: 0;
+    z-index: 1;
+}
+
+.tooltip {
+    position: absolute;
+    padding: 5px;
+    background-color: rgb(11, 40, 65);
+    color: white;
+    border: 0px solid white;
+    border-radius: 0px;
+    display: none;
+    opacity: .75;
+    font-size: 14px;
+}
+
+.tooltip-line {
+    stroke-opacity: 0.5;
 }
