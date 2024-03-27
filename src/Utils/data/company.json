@@ -1,0 +1,27 @@
+[
+  {
+    "Company_Name": "Reliance Industries Ltd",
+    "Company_Code": "RIL",
+    "ISIN_Code": "INE002A01018"
+  },
+  {
+    "Company_Name": "Jio Financial Services Ltd",
+    "Company_Code": "JIOFIN",
+    "ISIN_Code": "INE758E01017"
+  },
+  {
+    "Company_Name": "Hero Motocorp Ltd",
+    "Company_Code": "HEROMOTOCO",
+    "ISIN_Code": "INE158A01026"
+  },
+  {
+    "Company_Name": "Kotak Mahindra Bank Ltd",
+    "Company_Code": "KOTAKBANK",
+    "ISIN_Code": "INE237A01028"
+  },
+  {
+    "Company_Name": "HDFC Bank Ltd",
+    "Company_Code": "HDFCBANK",
+    "ISIN_Code": "INE040A01034"
+  }
+]
