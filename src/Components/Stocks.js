@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import companyData from '../Utils/data/company.json';
 import stockApi from '../Utils/apis/stock_api';
 import intradayStockApi from '../Utils/apis/intraday_stock';
 import marketHolidayApi from '../Utils/apis/market_holiday';
+import './Style.css';
 
 export default function Stocks() {
     const [stockData, setStockData] = useState([]);
+    const navigate = useNavigate();
+
+    const handleTableRowClick = async (stock) => {
+        navigate('/', {
+            state: {
+                stockName: stock.Company_Code,
+                companyIsin: stock.ISIN_Code,
+                startDate: '2024-03-27',
+                endDate: '2000-01-01',
+            },
+        });
+    };
 
     const isMarketHoliday = (date) => {
         let marketHoliday = marketHolidayApi(date);
@@ -20,25 +34,25 @@ export default function Stocks() {
         return dayOfWeek === 0 || dayOfWeek === 6; // Sunday (0) and Saturday (6) are weekends
     };
 
-    const findLastTradingDay = (completeDate) => {
-        let date = completeDate.getDate();
-        let lastTradingDay = null;
+    useEffect(() => {
+        const findLastTradingDay = (completeDate) => {
+            let date = completeDate.getDate();
+            let lastTradingDay = null;
 
-        for (let i = date - 1; i > 0; i--) {
-            const currentDate = new Date(completeDate.getFullYear(), completeDate.getMonth(), i, 12);
-            if (!isWeekend(currentDate)) {
-                const currentDateStr = currentDate.toISOString().split('T')[0];
-                const isHoliday = isMarketHoliday(currentDateStr);
-                if (!isHoliday) {
-                    lastTradingDay = currentDateStr;
-                    break;
+            for (let i = date - 1; i > 0; i--) {
+                const currentDate = new Date(completeDate.getFullYear(), completeDate.getMonth(), i, 12);
+                if (!isWeekend(currentDate)) {
+                    const currentDateStr = currentDate.toISOString().split('T')[0];
+                    const isHoliday = isMarketHoliday(currentDateStr);
+                    if (!isHoliday) {
+                        lastTradingDay = currentDateStr;
+                        break;
+                    }
                 }
             }
-        }
-        return lastTradingDay;
-    };
+            return lastTradingDay;
+        };
 
-    useEffect(() => {
         const fetchData = async () => {
             try {
                 const today = new Date();
@@ -61,12 +75,14 @@ export default function Stocks() {
                         if (currentTime < marketOpeningTime.getTime()) {
                             const lastSecondTradingDay = findLastTradingDay(new Date(lastTradingDay));
                             stockInfo = await intradayStockApi('NSE_EQ', ISIN_Code);
+                            if (stockInfo.data.candles.length === 0) {
+                                stockInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);
+                            }
                             lastDayInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastSecondTradingDay, lastSecondTradingDay);
                         } else if (currentTime >= marketOpeningTime.getTime() && currentTime <= marketClosingTime.getTime()) {
                             stockInfo = await intradayStockApi('NSE_EQ', ISIN_Code);
                             lastDayInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);
                         } else if (currentTime >= marketClosingTime.getTime()) {
-                            const todayDate = today.toISOString().split('T')[0];
                             stockInfo = await intradayStockApi('NSE_EQ', ISIN_Code);
                             lastDayInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);
                         }
@@ -77,6 +93,7 @@ export default function Stocks() {
 
                         return {
                             Company_Code,
+                            ISIN_Code,
                             LTP: stockInfo.data.candles[0][4],
                             Change: change.toFixed(2),
                             ChangePercentage: changePercentage,
@@ -101,27 +118,25 @@ export default function Stocks() {
     };
 
     return (
-        <div className="col-lg-2">
-            <table className="table table-sm">
-                <thead>
-                    <tr>
-                        <th scope="col">Company</th>
-                        <th scope="col">LTP</th>
-                        <th scope="col">Chg</th>
-                        <th scope="col">Chg%</th>
+        <table className="table table-sm custom-table">
+            <thead className="thead-custom">
+                <tr>
+                    <th scope="col">Company</th>
+                    <th scope="col">LTP</th>
+                    <th scope="col">Chg</th>
+                    <th scope="col">Chg%</th>
+                </tr>
+            </thead>
+            <tbody className="table-group-divider table-divider-color">
+                {stockData.map((stock, index) => (
+                    <tr key={index} onClick={() => handleTableRowClick(stock)}>
+                        <td>{stock.Company_Code}</td>
+                        <td>{stock.LTP}</td>
+                        <td style={{ color: stock.Color }}>{stock.Change}</td>
+                        <td style={{ color: stock.Color }}>{stock.ChangePercentage}%</td>
                     </tr>
-                </thead>
-                <tbody className="table-group-divider table-divider-color">
-                    {stockData.map((stock, index) => (
-                        <tr key={index}>
-                            <td>{stock.Company_Code}</td>
-                            <td>{stock.LTP}</td>
-                            <td style={{ color: stock.Color }}>{stock.Change}</td>
-                            <td style={{ color: stock.Color }}>{stock.ChangePercentage}%</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+                ))}
+            </tbody>
+        </table>
     );
 }
