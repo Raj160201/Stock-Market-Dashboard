@@ -22,16 +22,12 @@ export default function Home() {
             <div className="row">
                 <div className="col-md-9">
                     <StockChart stockCode={stockName} apiUrl={apiUrl} />
+                    <IPONews />
                 </div>
                 <div className="col-md-3">
                     <StockIndex />
                     <Stocks />
                     <News />
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-md-9">
-                    <IPONews />
                 </div>
             </div>
         </>

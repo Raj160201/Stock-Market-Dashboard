@@ -28,9 +28,9 @@ export default function StockChart({ stockCode, apiUrl }) {
         };
 
         const renderChart = async () => {
-            const margin = { top: 40, right: 68, bottom: 35, left: 10 };
+            const margin = { top: 40, right: 68, bottom: 40, left: 10 };
             const width = 1080 - margin.left - margin.right;
-            const height = 650 - margin.top - margin.bottom;
+            const height = 670 - margin.top - margin.bottom;
 
             // Set up the x and y scales
             const x = d3.scaleTime().range([0, width]);
@@ -275,7 +275,7 @@ export default function StockChart({ stockCode, apiUrl }) {
                 .attr('height', 70)
                 .append('g')
                 .style("fill", "#ccc")
-                .attr('transform', 'translate(90,19)');
+                .attr('transform', 'translate(90,30)');
 
             gRange.call(sliderRange);
             // Add the chart title
@@ -295,7 +295,7 @@ export default function StockChart({ stockCode, apiUrl }) {
             svg.append("text")
                 .attr("class", "source-credit")
                 .attr("x", width - 100)
-                .attr("y", height + margin.bottom - 1)
+                .attr("y", height + margin.bottom - 0)
                 .style("font-size", "12")
                 .style("fill", "#ccc")
                 .style("font-family", "sans-serif")

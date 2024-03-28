@@ -74,6 +74,7 @@ export default function Stocks() {
 
                         if (currentTime < marketOpeningTime.getTime()) {
                             const lastSecondTradingDay = findLastTradingDay(new Date(lastTradingDay));
+                            console.log(lastSecondTradingDay);
                             stockInfo = await intradayStockApi('NSE_EQ', ISIN_Code);
                             if (stockInfo.data.candles.length === 0) {
                                 stockInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);
