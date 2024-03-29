@@ -8,6 +8,11 @@
     }
 }
 
+.news-slider {
+    max-height: 1300px;
+    /* Adjust the height as per your requirement */
+}
+
 .smaller-card-group {
     max-width: 80vw;
     margin: 0;
@@ -21,6 +26,7 @@
     background-color: #2d3548;
     color: #fff;
     border-radius: 10px;
+    padding: auto;
 }
 
 #chart-container {
@@ -36,7 +42,7 @@ rect {
 
 .tooltip {
     position: absolute;
-    padding: 5px;
+    padding: 3px 5px;
     background-color: rgb(11, 40, 65);
     color: white;
     border: 0px solid white;
@@ -48,17 +54,6 @@ rect {
 
 .tooltip-line {
     stroke-opacity: 0.5;
-}
-
-.tooltip,
-.tooltip-raw-date {
-    position: absolute;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    pointer-events: none;
 }
 
 .custom-table {

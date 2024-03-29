@@ -21,8 +21,8 @@ export default function Stocks() {
         });
     };
 
-    const isMarketHoliday = (date) => {
-        let marketHoliday = marketHolidayApi(date);
+    const isMarketHoliday = async (date) => {
+        const marketHoliday = await marketHolidayApi(date);
         if (marketHoliday.status === 'success' && marketHoliday.data.length > 0) {
             return true;
         }
@@ -35,7 +35,7 @@ export default function Stocks() {
     };
 
     useEffect(() => {
-        const findLastTradingDay = (completeDate) => {
+        const findLastTradingDay = async (completeDate) => {
             let date = completeDate.getDate();
             let lastTradingDay = null;
 
@@ -43,7 +43,7 @@ export default function Stocks() {
                 const currentDate = new Date(completeDate.getFullYear(), completeDate.getMonth(), i, 12);
                 if (!isWeekend(currentDate)) {
                     const currentDateStr = currentDate.toISOString().split('T')[0];
-                    const isHoliday = isMarketHoliday(currentDateStr);
+                    const isHoliday = await isMarketHoliday(currentDateStr);
                     if (!isHoliday) {
                         lastTradingDay = currentDateStr;
                         break;
@@ -70,11 +70,10 @@ export default function Stocks() {
                         const { ISIN_Code, Company_Code } = company;
                         let stockInfo, lastDayInfo;
                         const currentTime = today.getTime();
-                        const lastTradingDay = findLastTradingDay(today);
+                        const lastTradingDay = await findLastTradingDay(today);
 
                         if (currentTime < marketOpeningTime.getTime()) {
-                            const lastSecondTradingDay = findLastTradingDay(new Date(lastTradingDay));
-                            console.log(lastSecondTradingDay);
+                            const lastSecondTradingDay = await findLastTradingDay(new Date(lastTradingDay));
                             stockInfo = await intradayStockApi('NSE_EQ', ISIN_Code);
                             if (stockInfo.data.candles.length === 0) {
                                 stockInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);

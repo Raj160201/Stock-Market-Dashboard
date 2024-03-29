@@ -32,7 +32,6 @@ export default function StockChart({ stockCode, apiUrl }) {
             const width = 1080 - margin.left - margin.right;
             const height = 670 - margin.top - margin.bottom;
 
-            // Set up the x and y scales
             const x = d3.scaleTime().range([0, width]);
             const y = d3.scaleLinear().range([height, 0]);
 
@@ -51,7 +50,6 @@ export default function StockChart({ stockCode, apiUrl }) {
                 .append("div")
                 .attr("class", "tooltip");
 
-            // Create our gradient
             const gradient = svg.append("defs")
                 .append("linearGradient")
                 .attr("id", "gradient")
@@ -72,12 +70,11 @@ export default function StockChart({ stockCode, apiUrl }) {
                 .attr("stop-opacity", 0);
 
             const data = await fetchChartData();
-            if (!data) return; // Handle error or empty data
+            if (!data) return;
 
             x.domain(d3.extent(data, d => d.Date));
             y.domain([0, d3.max(data, d => d.Close + (0.05 * d.Close))]);
 
-            // Add gridlines
             svg.append("g")
                 .attr("class", "grid")
                 .call(d3.axisLeft(y)
@@ -86,9 +83,8 @@ export default function StockChart({ stockCode, apiUrl }) {
                 )
                 .selectAll("line")
                 .style("stroke", "#ddd")
-                .style("stroke-opacity", 0.1);
+                .style("stroke-opacity", 0.07);
 
-            // Add the x-axis
             svg.append("g")
                 .attr("class", "x-axis")
                 .attr("transform", `translate(0,${height})`)
@@ -97,9 +93,10 @@ export default function StockChart({ stockCode, apiUrl }) {
                     .tickValues(x.ticks(d3.timeYear.every(1)))
                     .tickFormat(d3.timeFormat("%Y")))
                 .selectAll(".tick text")
+                .style("stroke-opacity", 1)
+            svg.selectAll(".tick text")
                 .attr("fill", "#777");
 
-            // Add the y-axis
             svg.append("g")
                 .attr("class", "y-axis")
                 .attr("transform", `translate(${width},0)`)
@@ -113,18 +110,15 @@ export default function StockChart({ stockCode, apiUrl }) {
                 .selectAll(".tick text")
                 .attr("fill", "#777");
 
-            // Set up the line generator
             const line = d3.line()
                 .x(d => x(d.Date))
                 .y(d => y(d.Close));
 
-            // Create an area generator
             const area = d3.area()
                 .x(d => x(d.Date))
                 .y0(height)
                 .y1(d => y(d.Close));
 
-            // Add the area path
             svg.append("path")
                 .datum(data)
                 .attr("class", "area")
@@ -132,7 +126,6 @@ export default function StockChart({ stockCode, apiUrl }) {
                 .style("fill", "url(#gradient)")
                 .style("opacity", .5);
 
-            // Add the line path
             const path = svg.append("path")
                 .datum(data)
                 .attr("class", "line")
@@ -141,15 +134,12 @@ export default function StockChart({ stockCode, apiUrl }) {
                 .attr("stroke-width", 1)
                 .attr("d", line);
 
-            // Add a circle element
             const circle = svg.append("circle")
                 .attr("r", 0)
                 .attr("fill", "red")
                 .style("stroke", "white")
                 .attr("opacity", 0.7)
                 .style("pointer-events", "none");
-
-            // Add red lines extending from the circle to the date and value
 
             const tooltipLineX = svg.append("line")
                 .attr("class", "tooltip-line")
@@ -165,56 +155,42 @@ export default function StockChart({ stockCode, apiUrl }) {
                 .attr("stroke-width", 1)
                 .attr("stroke-dasharray", "2,2");
 
-            // Create a listening rectangle
-
             const listeningRect = svg.append("rect")
                 .attr("width", width)
                 .attr("height", height);
 
-            // Create the mouse move function
-
             listeningRect.on("mousemove", function (event) {
+                data.sort((a, b) => a.Date - b.Date)
                 const [xCoord] = d3.pointer(event, this);
                 const bisectDate = d3.bisector(d => d.Date).left;
                 const x0 = x.invert(xCoord);
                 const i = bisectDate(data, x0, 1);
-                let d0 = data[i - 1];
-                let d1 = data[i];
-
-                // Check if d0 or d1 is undefined
-                if (!d0 || !d1) {
-                    console.error('Invalid data at index:', i);
-                    return;
-                }
-
-                // Check which data point is closer to the mouse position
+                if (i >= data.length) return;
+                const d0 = data[i - 1 < 0 ? 0 : i - 1];
+                const d1 = data[i];
                 const d = x0 - d0.Date > d1.Date - x0 ? d1 : d0;
                 const xPos = x(d.Date);
                 const yPos = y(d.Close);
 
-                // Update the circle position
                 circle.attr("cx", xPos).attr("cy", yPos);
 
-                // Add transition for the circle radius
                 circle.transition()
                     .duration(50)
                     .attr("r", 5);
 
-                // Update the position of the red lines
                 tooltipLineX.style("display", "block").attr("x1", xPos).attr("x2", xPos).attr("y1", 0).attr("y2", height);
                 tooltipLineY.style("display", "block").attr("y1", yPos).attr("y2", yPos).attr("x1", 0).attr("x2", width);
 
-                // Add content to tooltips
                 tooltip
                     .style("display", "block")
-                    .style("left", `${xPos + width / 50}px`) // Adjust tooltip position for better alignment
+                    .style("left", `${width + 22}px`) // Adjust tooltip position for better alignment
                     .style("top", `${yPos + 68}px`)
                     .html(`₹${d.Close !== undefined ? d.Close.toFixed(2) : 'N/A'}`);
 
                 tooltipRawDate
                     .style("display", "block")
                     .style("left", `${xPos + 60}px`)
-                    .style("top", `${height + 53}px`)
+                    .style("top", `${height + 10}px`)
                     .html(`${d.Date !== undefined ? d.Date.toISOString().slice(0, 10) : 'N/A'}`);
             });
 
@@ -228,7 +204,6 @@ export default function StockChart({ stockCode, apiUrl }) {
                 tooltipLineY.style("display", "none");
             });
 
-            // Define the slider
             const sliderRange = sliderBottom()
                 .min(d3.min(data, d => d.Date))
                 .max(d3.max(data, d => d.Date))
@@ -246,18 +221,16 @@ export default function StockChart({ stockCode, apiUrl }) {
                 svg.select(".area").attr("d", area(filteredData));
                 y.domain([0, d3.max(filteredData, d => d.Close)]);
 
-
                 svg.select(".x-axis")
                     .transition()
-                    .duration(300) // transition duration in ms
+                    .duration(300)
                     .call(d3.axisBottom(x)
                         .tickValues(x.ticks(d3.timeYear.every(1)))
                         .tickFormat(d3.timeFormat("%Y")));
 
-                // Update the y-axis with new domain
                 svg.select(".y-axis")
                     .transition()
-                    .duration(300) // transition duration in ms
+                    .duration(300)
                     .call(d3.axisRight(y)
                         .ticks(10)
                         .tickFormat(d => {
@@ -267,7 +240,6 @@ export default function StockChart({ stockCode, apiUrl }) {
 
             });
 
-            // Add the slider to the DOM
             const gRange = d3
                 .select('#slider-range')
                 .append('svg')
@@ -278,7 +250,6 @@ export default function StockChart({ stockCode, apiUrl }) {
                 .attr('transform', 'translate(90,30)');
 
             gRange.call(sliderRange);
-            // Add the chart title
 
             svg.append("text")
                 .attr("class", "chart-title")
@@ -289,8 +260,6 @@ export default function StockChart({ stockCode, apiUrl }) {
                 .style("font-weight", "bold")
                 .style("font-family", "sans-serif")
                 .text(`${stockCode} \u2022 1D \u2022 NSE`);
-
-            // Add the source credit
 
             svg.append("text")
                 .attr("class", "source-credit")
@@ -304,7 +273,6 @@ export default function StockChart({ stockCode, apiUrl }) {
 
         renderChart();
 
-        // Cleanup function to remove the SVG element
         return () => {
             d3.select("#chart-container").select("svg").remove();
             d3.select("#slider-range").select("svg").remove();
@@ -320,3 +288,4 @@ export default function StockChart({ stockCode, apiUrl }) {
         </>
     );
 }
+
