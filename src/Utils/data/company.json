@@ -23,5 +23,10 @@
     "Company_Name": "HDFC Bank Ltd",
     "Company_Code": "HDFCBANK",
     "ISIN_Code": "INE040A01034"
+  },
+  {
+    "Company_Name": "STATE BANK OF INDIA",
+    "Company_Code": "SBIN",
+    "ISIN_Code": "INE062A01020"
   }
 ]
