@@ -16,6 +16,12 @@
     justify-content: center;
 }
 
+/* .chart-col {
+    display: flex;
+    width: fit-content;
+    max-width: 50%;
+} */
+
 .col-md-9,
 .col-md-3 {
     flex: 1;

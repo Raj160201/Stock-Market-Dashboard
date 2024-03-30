@@ -2,9 +2,11 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import News from './News';
 import Stocks from './Stocks';
-import StockChart from './Stock_Chart';
+// import StockChart from './Stock_Chart';
 import StockIndex from './Stock_index';
 import IPONews from './IPO_News';
+import StockChartData from './StockChartData';
+import StockChartContent from './StockChartContent';
 
 export default function Home() {
     const location = useLocation();
@@ -13,8 +15,9 @@ export default function Home() {
         companyIsin = "INE002A01018";
         stockName = "RIL";
     }
+    const today = new Date().toISOString().split('T')[0];
     const apiHeader = "https://api.upstox.com/v2/historical-candle/NSE_EQ%7C";
-    const apiFooter = "/day/2024-03-27/2000-01-01";
+    const apiFooter = `/day/${today}/2000-01-01`;
     const apiUrl = apiHeader + companyIsin + apiFooter;
 
     return (
@@ -22,7 +25,12 @@ export default function Home() {
             <div className="home">
                 <div className="row">
                     <div className="col-md-9">
-                        <StockChart stockCode={stockName} apiUrl={apiUrl} />
+                        <StockChartData apiUrl={apiUrl}>
+                            {(chartData, loading) => (
+                                <StockChartContent stockCode={stockName} chartData={chartData} loading={loading} />
+                            )}
+                        </StockChartData>
+                        {/* <StockChart stockCode={stockName} apiUrl={apiUrl} /> */}
                         <IPONews />
                     </div>
                     <div className="col-md-3">
