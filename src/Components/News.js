@@ -34,7 +34,7 @@ export default function News() {
         dots: false,
         infinite: true,
         speed: 500,
-        slidesToShow: 2,
+        slidesToShow: 3,
         slidesToScroll: 1,
         arrows: false,
         autoplay: true,
@@ -56,7 +56,7 @@ export default function News() {
     };
 
     return (
-        <Slider {...sliderSettings}>
+        <Slider {...sliderSettings} className='news-slider'>
             {newsData &&
                 newsData.articles.map((article, index) => (
                     <div className="card" key={index}>

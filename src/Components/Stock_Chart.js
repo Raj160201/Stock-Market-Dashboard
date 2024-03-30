@@ -184,13 +184,13 @@ export default function StockChart({ stockCode, apiUrl }) {
                 tooltip
                     .style("display", "block")
                     .style("left", `${width + 22}px`) // Adjust tooltip position for better alignment
-                    .style("top", `${yPos + 68}px`)
+                    .style("top", `${yPos + 24}px`)
                     .html(`₹${d.Close !== undefined ? d.Close.toFixed(2) : 'N/A'}`);
 
                 tooltipRawDate
                     .style("display", "block")
-                    .style("left", `${xPos + 60}px`)
-                    .style("top", `${height + 10}px`)
+                    .style("left", `${xPos - 19}px`)
+                    .style("top", `${height + 12}px`)
                     .html(`${d.Date !== undefined ? d.Date.toISOString().slice(0, 10) : 'N/A'}`);
             });
 

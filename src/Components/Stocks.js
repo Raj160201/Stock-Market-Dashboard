@@ -71,13 +71,20 @@ export default function Stocks() {
                         let stockInfo, lastDayInfo;
                         const currentTime = today.getTime();
                         const lastTradingDay = await findLastTradingDay(today);
+                        const todayDateStr = today.toISOString().split('T')[0];
+                        const isHoliday = await isMarketHoliday(todayDateStr);
+                        console.log()
 
-                        if (currentTime < marketOpeningTime.getTime()) {
+                        if (isHoliday || isWeekend(today)) {
+                            const lastSecondTradingDay = await findLastTradingDay(new Date(lastTradingDay));
+                            stockInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);
+                            lastDayInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastSecondTradingDay, lastSecondTradingDay);
+                        } else if (currentTime < marketOpeningTime.getTime()) {
                             const lastSecondTradingDay = await findLastTradingDay(new Date(lastTradingDay));
                             stockInfo = await intradayStockApi('NSE_EQ', ISIN_Code);
-                            if (stockInfo.data.candles.length === 0) {
-                                stockInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);
-                            }
+                            // if (stockInfo.data.candles.length === 0) {
+                            //     stockInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastTradingDay, lastTradingDay);
+                            // }
                             lastDayInfo = await stockApi('NSE_EQ', ISIN_Code, '30minute', lastSecondTradingDay, lastSecondTradingDay);
                         } else if (currentTime >= marketOpeningTime.getTime() && currentTime <= marketClosingTime.getTime()) {
                             stockInfo = await intradayStockApi('NSE_EQ', ISIN_Code);

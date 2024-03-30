@@ -19,15 +19,17 @@ export default function Home() {
 
     return (
         <>
-            <div className="row">
-                <div className="col-md-9">
-                    <StockChart stockCode={stockName} apiUrl={apiUrl} />
-                    <IPONews />
-                </div>
-                <div className="col-md-3">
-                    <StockIndex />
-                    <Stocks />
-                    <News />
+            <div className="home">
+                <div className="row">
+                    <div className="col-md-9">
+                        <StockChart stockCode={stockName} apiUrl={apiUrl} />
+                        <IPONews />
+                    </div>
+                    <div className="col-md-3">
+                        <StockIndex />
+                        <Stocks />
+                        <News />
+                    </div>
                 </div>
             </div>
         </>
