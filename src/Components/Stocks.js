@@ -36,16 +36,17 @@ export default function Stocks() {
 
     useEffect(() => {
         const findLastTradingDay = async (completeDate) => {
-            let date = completeDate.getDate();
+            let currentDate = new Date(completeDate);
             let lastTradingDay = null;
-
-            for (let i = date - 1; i > 0; i--) {
-                const currentDate = new Date(completeDate.getFullYear(), completeDate.getMonth(), i, 12);
+            let cnt = true;
+            while (cnt === true) {
+                currentDate = new Date(currentDate.setDate(currentDate.getDate() - 1));
                 if (!isWeekend(currentDate)) {
                     const currentDateStr = currentDate.toISOString().split('T')[0];
                     const isHoliday = await isMarketHoliday(currentDateStr);
                     if (!isHoliday) {
                         lastTradingDay = currentDateStr;
+                        cnt = false;
                         break;
                     }
                 }
@@ -73,7 +74,7 @@ export default function Stocks() {
                         const lastTradingDay = await findLastTradingDay(today);
                         const todayDateStr = today.toISOString().split('T')[0];
                         const isHoliday = await isMarketHoliday(todayDateStr);
-                        console.log()
+                        // console.log(todayDateStr);
 
                         if (isHoliday || isWeekend(today)) {
                             const lastSecondTradingDay = await findLastTradingDay(new Date(lastTradingDay));
