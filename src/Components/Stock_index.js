@@ -23,7 +23,7 @@ export default function StockIndex() {
                         return {
                             Index_Name,
                             Index_Code,
-                            LTP: indexInfo.previousClose + indexInfo.variation,
+                            LTP: (indexInfo.previousClose + indexInfo.variation).toFixed(2),
                             Change: indexInfo.variation.toFixed(2),
                             ChangePercentage: indexInfo.percentChange.toFixed(2),
                             Color: getColor(indexInfo.variation),
